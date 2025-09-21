@@ -1,4 +1,4 @@
-# VIEW/WEB_VIEW.PY - VERSION CORRIGÉE AVEC CRUD FONCTIONNEL
+# VIEW/WEB_VIEW.PY 
 # ====================
 
 from view.base_view import BaseView
