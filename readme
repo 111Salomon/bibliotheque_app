@@ -1,0 +1,31 @@
+Application web de gestion de bibliothèque développée en Python pur suivant l'architecture MVC (Model-View-Controller)
+
+# Cette application démontre de manière concrète et pratique les concepts fondamentaux de l'architecture logicielle :
+
+- Pattern MVC avec séparation stricte des responsabilités
+- Programmation Orientée Objet avec héritage multiple
+- Base de données relationnelle MySQL avec contraintes d'intégrité
+- Interface web moderne sans framework lourd
+- Opérations CRUD complètes sur 3 entités liées
+
+# Fonctionnalités Implémentées
+*** Gestion des Utilisateurs ***
+
+-  CRUD complet : Créer, Lire, Modifier, Supprimer
+-  Héritage démontré : Utilisateur hérite de Personne
+-  Validation métier : Email unique, format valide
+-  Interface intuitive : Formulaires modaux, confirmations
+
+*** Catalogue de Livres ***
+
+- Gestion d'inventaire : Titre, auteur, ISBN, genre, année
+- Suivi de disponibilité : Automatique selon les emprunts
+- Validation des données : Champs requis, formats
+- Interface moderne : Tableaux triables, actions rapides
+
+*** Suivi des Emprunts ***
+
+- Relations complexes : Utilisateur ↔ Livre (N:N)
+- Logique métier : Dates automatiques, statuts
+- Gestion des retours : Mise à jour des disponibilités
+- Contraintes d'intégrité : Vérifications avant création
