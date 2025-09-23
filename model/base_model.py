@@ -19,7 +19,14 @@ class BaseModel:
                     result = cursor.fetchone()
             else:
                 connection.commit()
-                result = cursor.lastrowid
+                # For INSERT queries cursor.lastrowid will be the new id (truthy)
+                # For UPDATE/DELETE lastrowid is usually 0; use rowcount to indicate affected rows
+                last_id = getattr(cursor, 'lastrowid', None)
+                if last_id:
+                    result = last_id
+                else:
+                    # rowcount will be number of affected rows (0 if none)
+                    result = getattr(cursor, 'rowcount', 0)
             
             cursor.close()
             return result
