@@ -1,4 +1,4 @@
-# VIEW/WEB_VIEW.PY 
+# VIEW/WEB_VIEW.PY - VERSION CORRIGÉE AVEC CRUD FONCTIONNEL
 # ====================
 
 from view.base_view import BaseView
@@ -298,6 +298,7 @@ class WebView(BaseView):
             </div>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+            <script src="/static/js/app.js"></script>
         </body>
         </html>
         """
@@ -323,20 +324,24 @@ class WebView(BaseView):
         
         users_html = ""
         for user in users:
+            # Préparer une version échappée du nom pour l'injection dans l'attribut onclick JS
+            name_raw = (str(user.get('prenom', '') or '') + ' ' + str(user.get('nom', '') or '')).strip()
+            name_escaped = name_raw.replace("'", "\\'")
+            uid = user.get('id', '')
             users_html += f"""
             <tr>
-                <td>{user.get('id', '')}</td>
+                <td>{uid}</td>
                 <td><strong>{user.get('prenom', '')} {user.get('nom', '')}</strong></td>
                 <td>{user.get('email', '')}</td>
                 <td>{user.get('telephone', '')}</td>
                 <td>{user.get('date_inscription', '')}</td>
-                <td><span class="badge bg-success">Actif</span></td>
+                <td><span class=\"badge bg-success\">Actif</span></td>
                 <td>
-                    <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser({user.get('id', '')}, '{user.get('nom', '')}', '{user.get('prenom', '')}', '{user.get('email', '')}', '{user.get('telephone', '')}')">
-                        <i class="fas fa-edit"></i>
+                    <button class=\"btn btn-sm btn-outline-primary me-1\" onclick=\"editUser({uid}, '{user.get('nom', '')}', '{user.get('prenom', '')}', '{user.get('email', '')}', '{user.get('telephone', '')}')\">
+                        <i class=\"fas fa-edit\"></i>
                     </button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUser({user.get('id', '')}, '{user.get('prenom', '')} {user.get('nom', '')}')">
-                        <i class="fas fa-trash"></i>
+                    <button class=\"btn btn-sm btn-outline-danger\" onclick=\"openConfirmModal('Êtes-vous sûr de vouloir supprimer {name_escaped} ?', '/utilisateurs?action=delete&id={uid}')\">
+                        <i class=\"fas fa-trash\"></i>
                     </button>
                 </td>
             </tr>
@@ -431,35 +436,26 @@ class WebView(BaseView):
             </div>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-            <script>
-                function resetForm() {{
-                    document.getElementById('userForm').action = '/utilisateurs/create';
-                    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus me-2"></i>Nouvel Utilisateur';
-                    document.getElementById('userId').value = '';
-                    document.getElementById('nom').value = '';
-                    document.getElementById('prenom').value = '';
-                    document.getElementById('email').value = '';
-                    document.getElementById('telephone').value = '';
-                }}
+            <!-- Confirmation modal réutilisable -->
+            <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="confirmModalMessage">Message</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="button" id="confirmModalConfirmBtn" class="btn btn-danger">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                function editUser(id, nom, prenom, email, telephone) {{
-                    document.getElementById('userForm').action = '/utilisateurs/update';
-                    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-edit me-2"></i>Modifier Utilisateur';
-                    document.getElementById('userId').value = id;
-                    document.getElementById('nom').value = nom;
-                    document.getElementById('prenom').value = prenom;
-                    document.getElementById('email').value = email;
-                    document.getElementById('telephone').value = telephone;
-                    
-                    new bootstrap.Modal(document.getElementById('userModal')).show();
-                }}
-
-                function deleteUser(id, name) {{
-                    if (confirm('Êtes-vous sûr de vouloir supprimer ' + name + ' ?')) {{
-                        window.location.href = '/utilisateurs?action=delete&id=' + id;
-                    }}
-                }}
-            </script>
+            <!-- JS déplacé vers /static/js/app.js -->
         </body>
         </html>
         """
@@ -594,37 +590,7 @@ class WebView(BaseView):
             </div>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-            <script>
-                function resetBookForm() {{
-                    document.getElementById('bookForm').action = '/livres/create';
-                    document.getElementById('bookModalTitle').innerHTML = '<i class="fas fa-book-plus me-2"></i>Nouveau Livre';
-                    document.getElementById('bookId').value = '';
-                    document.getElementById('titre').value = '';
-                    document.getElementById('auteur').value = '';
-                    document.getElementById('isbn').value = '';
-                    document.getElementById('genre').value = '';
-                    document.getElementById('annee_publication').value = '';
-                }}
-
-                function editBook(id, titre, auteur, isbn, genre, annee) {{
-                    document.getElementById('bookForm').action = '/livres/update';
-                    document.getElementById('bookModalTitle').innerHTML = '<i class="fas fa-book-edit me-2"></i>Modifier Livre';
-                    document.getElementById('bookId').value = id;
-                    document.getElementById('titre').value = titre;
-                    document.getElementById('auteur').value = auteur;
-                    document.getElementById('isbn').value = isbn;
-                    document.getElementById('genre').value = genre;
-                    document.getElementById('annee_publication').value = annee;
-                    
-                    new bootstrap.Modal(document.getElementById('bookModal')).show();
-                }}
-
-                function deleteBook(id, titre) {{
-                    if (confirm('Êtes-vous sûr de vouloir supprimer "' + titre + '" ?')) {{
-                        window.location.href = '/livres?action=delete&id=' + id;
-                    }}
-                }}
-            </script>
+            <script src="/static/js/app.js"></script>
         </body>
         </html>
         """
@@ -753,13 +719,7 @@ class WebView(BaseView):
             </div>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-            <script>
-                function returnBook(loanId) {{
-                    if (confirm('Marquer ce livre comme rendu ?')) {{
-                        window.location.href = '/emprunts?action=return&id=' + loanId;
-                    }}
-                }}
-            </script>
+            <script src="/static/js/app.js"></script>
         </body>
         </html>
         """
@@ -794,6 +754,43 @@ class WebView(BaseView):
                 </div>
             </div>
         </nav>
+        <!-- Confirmation modal (centralisé) -->
+        <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="confirmModalMessage">Confirmez cette action</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" id="confirmModalConfirmBtn" class="btn btn-danger">Confirmer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script src="/static/js/app.js"></script>
+        <style>
+            /* Simple shake animation for invalid forms */
+            @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-6px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-4px); } 100% { transform: translateX(0); } }
+            .shake { animation: shake 300ms ease; }
+        </style>
+
+        <!-- Global toast for feedback -->
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+            <div id="globalToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div id="globalToastBody" class="toast-body">Opération réussie</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- JS déplacé vers /static/js/app.js -->
         """
     
     def render_404_page(self):
