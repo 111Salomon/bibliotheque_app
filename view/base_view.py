@@ -1,5 +1,5 @@
 # 7. VIEW/BASE_VIEW.PY
-# ====================
+
 import os
 
 class BaseView:

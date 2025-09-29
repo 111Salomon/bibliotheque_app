@@ -1,5 +1,4 @@
-# VIEW/WEB_VIEW.PY - VERSION CORRIGÉE AVEC CRUD FONCTIONNEL
-# ====================
+# VIEW/WEB_VIEW.PY 
 
 from view.base_view import BaseView
 import http.server
@@ -251,7 +250,7 @@ class WebView(BaseView):
                     <div class="col-12 text-center mb-5">
                         <h1 class="display-4 mb-4">
                             <i class="fas fa-book-open text-primary me-3"></i>
-                            Bibliothèque MVC
+                            Bibliothèque
                         </h1>
                         <p class="lead">Application de démonstration - Architecture MVC en Python pur</p>
                     </div>

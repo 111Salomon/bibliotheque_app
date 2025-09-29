@@ -1,5 +1,4 @@
 # CONTRÔLEUR UTILISATEUR CORRIGÉ
-# ====================
 
 from controller.base_controller import BaseController
 from model.utilisateur import Utilisateur

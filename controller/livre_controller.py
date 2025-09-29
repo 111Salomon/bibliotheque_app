@@ -1,6 +1,4 @@
-# 
-# CONTRÔLEUR LIVRE CORRIGÉ
-# ====================
+# CONTRÔLEUR LIVRE 
 
 from controller.base_controller import BaseController
 from model.livre import Livre

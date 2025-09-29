@@ -1,5 +1,5 @@
 # 9. CONTROLLER/BASE_CONTROLLER.PY
-# ====================
+
 class BaseController:
     def __init__(self, model):
         self.model = model

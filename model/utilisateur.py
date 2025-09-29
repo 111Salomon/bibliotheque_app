@@ -1,5 +1,5 @@
 # 4. MODEL/UTILISATEUR.PY (Hérite de Personne)
-# ====================
+
 from model.base_model import BaseModel
 from model.personne import Personne
 
